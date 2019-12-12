@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.user.dao.IndexMapper">
+
+    <resultMap type="com.xiaoyi.bis.user.bean.IndexBean" id="indexResult">
+        <result column="userId" jdbcType="VARCHAR" property="user_id"/>
+        <result column="userInfoId" jdbcType="VARCHAR" property="user_info_id"/>
+        <result column="realName" jdbcType="VARCHAR" property="real_name"/>
+        <result column="nickName" jdbcType="VARCHAR" property="nick_name"/>
+        <result column="headImgUrl" jdbcType="VARCHAR" property="head_img_url"/>
+        <result column="dynamicImg" jdbcType="VARCHAR" property="img_url"/>
+        <result property="personalInfo" jdbcType="VARCHAR" column="personal_info"/>
+        <result property="labels" jdbcType="VARCHAR" column="labels"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="String" resultMap="indexResult">
+
+        SELECT u.user_id, ui.user_info_id, ui.real_name,ui.nick_name,ui.personal_info,ui.labels,dg.img_url
+        FROM lz_pf_user u
+          LEFT JOIN lz_pf_user_info ui on ui.user_id=u.user_id
+          LEFT JOIN lz_pf_dynamic d on d.user_id= u.user_id
+          LEFT JOIN lz_pf_dynamic_img dg on dg.dyna_id=d.dyna_id WHERE u.user_type='1' and u.is_delete='1'
+          ORDER BY d.create_time desc
+    </select>
+
+</mapper>

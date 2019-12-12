@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.xiaoyi.dao.LiveOrderMapper">
+
+<!--1-->
+    <select id="liveBroadcastAllMonthThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m') AND refund_name = '已付款'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="liveBroadcastAllMonthLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m')  AND refund_name = '已付款'
+        <if test="orgCode!=null and orgCode!=''">
+             and org_code = #{orgCode}
+        </if>
+    </select>
+
+<!--2-->
+
+    <select id="fullMonthRecordingThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="fullMonthRecordingLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+
+<!--3-->
+
+    <select id="jiThisAllMonthRecordingThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where  DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m')  AND refund_name = '已付款' and channel_name != '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="jiThisAllMonthRecordingLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m')  AND refund_name = '已付款' and channel_name != '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+
+<!--4-->
+
+    <select id="jiLateAllMonthRecordingThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where  DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款' and channel_name != '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="jiLateAllMonthRecordingLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款' and channel_name != '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+
+<!--5-->
+
+    <select id="tianThisAllMonthRecordingThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where  DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m')  AND refund_name = '已付款' and channel_name = '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="tianThisAllMonthRecordingLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m')  AND refund_name = '已付款' and channel_name = '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+
+<!--6-->
+
+    <select id="tianLateAllMonthRecordingThis" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where  DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款' and channel_name = '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+    <select id="tianLateAllMonthRecordingLast" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(prime_cost)
+        FROM ty_orders
+        where DATE_FORMAT(order_finish_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m') and class_type = '录播课' AND refund_name = '已付款' and channel_name = '添翼申学'
+        <if test="orgCode!=null and orgCode!=''">
+            and org_code = #{orgCode}
+        </if>
+    </select>
+
+
+    <select id="selectOrderByName" parameterType="com.xiaoyi.bis.xiaoyi.bean.OrderWhereBean" resultType="java.lang.Integer">
+        SELECT SUM(prime_cost) FROM `ty_orders`
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="month == 'this'">
+                AND DATE_FORMAT(create_date,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m')
+            </if>
+            <if test="month == 'last'">
+                AND DATE_FORMAT(create_date,'%Y-%m')=DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y-%m')
+            </if>
+            <if test="flag == 'is'">
+                AND channel_name = '添翼申学'
+            </if>
+            <if test="flag == 'no'">
+                AND channel_name = #{channelName}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectByUid" parameterType="String" resultType="String">
+        SELECT channel_name FROM `ty_orders` WHERE user_mobile = (
+	        SELECT tel_num FROM `lz_pf_user` WHERE user_id = #{uId}
+        )LIMIT 0,1
+    </select>
+
+    <select id="selectMobileByUid" parameterType="String" resultType="String">
+        SELECT tel_num FROM `lz_pf_user` WHERE user_id = #{uId}
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.user.dao.FollowMapper">
+
+    <resultMap type="com.xiaoyi.bis.user.domain.Follow" id="FollowResult">
+        <id column="followId" jdbcType="VARCHAR" property="follow_id"/>
+        <result column="userInfoId" jdbcType="VARCHAR" property="user_info_id"/>
+        <result column="followUserId" jdbcType="VARCHAR" property="follow_user_id"/>
+        <result column="followState" jdbcType="CHAR" property="follow_state"/>
+        <result property="followType" jdbcType="VARCHAR" column="follow_type"/>
+    </resultMap>
+
+    <select id="selectFollowList" parameterType="com.xiaoyi.bis.user.domain.Follow" resultMap="FollowResult">
+
+        SELECT f.follow_id, f.user_info_id, f.follow_user_id,f.follow_state,f.follow_type
+        FROM lz_pf_follow f
+          LEFT JOIN lz_pf_user u on u.user_id= f.user_info_id
+          WHERE f.follow_state='1' and f.follow_type=#{followType} and f.user_info_id=#{userInfoId} and u.is_delete='1'
+          ORDER BY f.create_time desc
+    </select>
+
+</mapper>

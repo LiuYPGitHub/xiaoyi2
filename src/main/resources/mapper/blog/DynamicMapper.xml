@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.blog.dao.DynamicMapper">
+    <resultMap id="DynamicMap" type="Dynamic">
+        <id property="dynaId" column="dyna_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="dynaContent" column="dyna_content"/>
+        <result property="dynaTime" column="dyna_time"/>
+        <result property="dynaStatus" column="dyna_status"/>
+        <result property="dynaCheckSta" column="dyna_check_sta"/>
+        <result property="dynaType" column="dyna_type"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="evtRelTime" column="evt_rel_time"/>
+        <result property="evtRelName" column="evt_rel_name"/>
+    </resultMap>
+
+    <resultMap id="DynamicUrlMap" type="DynamicUrl">
+        <id property="dynaId" column="dyna_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="dynaContent" column="dyna_content"/>
+        <result property="dynaTime" column="dyna_time"/>
+        <result property="dynaStatus" column="dyna_status"/>
+        <result property="dynaCheckSta" column="dyna_check_sta"/>
+        <result property="dynaType" column="dyna_type"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="imgUrl" column="img_url"/>
+    </resultMap>
+
+    <resultMap id="DynamicImgMap" type="DynamicImg">
+        <id property="dynaImgId" column="dyna_img_id"/>
+        <result property="dynaImgType" column="dyna_img_type"/>
+        <result property="dynaId" column="dyna_id"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="imgSource" column="img_source"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <!--      parameterType="long"  resultMap="D`ynamicMap" -->
+    <select id="selectById" resultType="com.xiaoyi.bis.blog.domain.Dynamic" resultMap="DynamicMap">
+        select d.dyna_id,
+        d.user_id,
+        d.dyna_content,
+        d.dyna_time,
+        d.dyna_status,
+        d.dyna_check_sta,
+        d.dyna_type,
+        d.is_delete,
+        d.create_by,
+        d.create_time,
+        d.update_by,
+        d.update_time,
+        d.evt_rel_time
+        FROM lz_pf_dynamic d
+        WHERE d.is_delete = 1 AND d.dyna_type = 0 AND d.dyna_status = 0 AND d.user_id = #{userId}
+        <if test="dynaContent != null and dynaContent != ''">
+            AND d.dyna_content like concat('%', #{dynaContent,jdbcType=VARCHAR}, '%')
+        </if>
+        order by d.create_time desc
+    </select>
+
+    <select id="LatestNews" resultType="com.xiaoyi.bis.blog.domain.DynamicUrl" resultMap="DynamicUrlMap">
+        select  d.dyna_id,
+                d.dyna_content,
+                d.dyna_time,
+                d.create_time,
+                GROUP_CONCAT(i.img_url) img_url
+        FROM lz_pf_dynamic d
+        LEFT JOIN lz_pf_dynamic_img i on d.dyna_id = i.dyna_id
+        WHERE d.is_delete = 1 AND d.dyna_type = 0 AND i.is_delete = 1 and d.dyna_status = 0 AND d.user_id = #{userId}
+        GROUP BY i.dyna_id
+        ORDER BY d.create_time DESC
+    </select>
+
+
+    <select id="selectIndexList" resultType="com.xiaoyi.bis.blog.domain.Dynamic" parameterType="String">
+        select d.dyna_id,
+        d.user_id,
+        d.dyna_content,
+        d.dyna_time,
+        d.dyna_status,
+        d.dyna_check_sta,
+        d.dyna_type,
+        d.is_delete,
+        d.create_by,
+        d.create_time,
+        d.update_by,
+        d.update_time,
+        d.evt_rel_time
+        FROM lz_pf_dynamic d, lz_pf_user u
+        WHERE d.is_delete = 1 AND d.dyna_status = 0  AND d.dyna_type= #{type} AND d.user_id=u.user_id AND u.is_delete = 1
+        order by d.create_time desc
+    </select>
+
+
+    <select id="selectdraftById" resultType="com.xiaoyi.bis.blog.domain.Dynamic" resultMap="DynamicMap">
+        select d.dyna_id,
+        d.user_id,
+        d.dyna_content,
+        d.dyna_time,
+        d.dyna_status,
+        d.dyna_check_sta,
+        d.dyna_type,
+        d.is_delete,
+        d.create_by,
+        d.create_time,
+        d.update_by,
+        d.update_time
+        FROM lz_pf_dynamic d
+        WHERE d.is_delete = 1 AND d.dyna_type = 0 AND d.dyna_status = 1 AND d.user_id = #{userId}
+        <if test="dynaContent != null and dynaContent != ''">
+            AND d.dyna_content like concat('%', #{dynaContent,jdbcType=VARCHAR}, '%')
+        </if>
+        ORDER BY d.create_time DESC
+    </select>
+
+    <update id="updateDynamic" parameterType="Dynamic">
+        update lz_pf_dynamic
+        set is_delete = '2'
+        where dyna_id = #{dynaId}
+    </update>
+
+    <update id="releaseDynamic" parameterType="Dynamic">
+        update lz_pf_dynamic
+        set dyna_status = 0,
+            create_time = #{createTime}
+        where dyna_id = #{dynaId}
+    </update>
+
+    <select id="getById" resultType="com.xiaoyi.bis.blog.domain.Dynamic" resultMap="DynamicMap">
+        select d.dyna_id,
+               d.user_id,
+               d.user_id,
+               d.dyna_content,
+               d.dyna_time,
+               d.dyna_status,
+               d.dyna_check_sta,
+               d.dyna_type,
+               d.is_delete,
+               d.create_by,
+               d.create_time,
+               d.update_by,
+               d.update_time
+        FROM lz_pf_dynamic d
+        WHERE is_delete = 1
+          AND d.dyna_type = 0
+          AND d.dyna_status = 1
+          AND d.dyna_id = #{dynaId}
+    </select>
+
+    <insert id="insertDynamic" parameterType="Dynamic">
+        replace into lz_pf_dynamic
+            (
+             dyna_id,
+             user_id,
+             dyna_content,
+             dyna_status,
+             dyna_type,
+             is_delete,
+             create_by,
+             create_time
+            )
+        value (
+            #{dynaId},
+            #{userId},
+            #{dynaContent},
+            #{dynaStatus},
+            #{dynaType},
+            #{isDelete},
+            #{createBy},
+            #{createTime}
+            )
+    </insert>
+
+    <insert id="insertDynamicImg" parameterType="DynamicImg">
+        replace into lz_pf_dynamic_img
+        (
+        dyna_img_id,
+        dyna_img_type,
+        dyna_id,
+        img_url,
+        img_source,
+        is_delete,
+        create_by,
+        create_time
+        )
+        values
+        <!--          <foreach item="item" index="index" collection="DynamicImgMap" separator=",">-->
+        (
+        #{dynaImgId},
+        #{dynaImgType},
+        #{dynaId},
+        #{imgUrl},
+        #{imgSource},
+        #{isDelete},
+        #{createBy},
+        #{createTime}
+        )
+        <!--        </foreach>-->
+    </insert>
+
+    <select id="getEchoById" resultType="com.xiaoyi.bis.blog.domain.Dynamic" resultMap="DynamicMap">
+        SELECT d.dyna_id,
+               d.dyna_content,
+               i.img_url
+        FROM lz_pf_dynamic d
+        LEFT JOIN lz_pf_dynamic_img i on d.dyna_id = i.dyna_id
+        WHERE d.dyna_status = 1 AND d.dyna_type = 1 AND d.dyna_id = #{dyna_id}
+    </select>
+
+    <update id="editDynamic" parameterType="Dynamic">
+        UPDATE lz_pf_dynamic
+        SET dyna_content = #{dynaContent},
+            update_by = #{updateBy},
+            update_time = #{updateTime}
+        WHERE dyna_id = #{dynaId}
+    </update>
+
+    <update id="editDynamicImg" parameterType="DynamicImg">
+        UPDATE lz_pf_dynamic_img
+        SET img_url = #{imgUrl},
+            update_by = #{updateBy},
+            update_time =#{updateTime}
+        WHERE dyna_id = #{dynaId}
+    </update>
+</mapper>

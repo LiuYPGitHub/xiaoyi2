@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.user.dao.LeadsUserMapper">
+
+    <resultMap type="com.xiaoyi.bis.user.domain.LeadsUser" id="SysUserResult">
+        <id column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="tel_num" jdbcType="VARCHAR" property="telNum"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="user_type" jdbcType="CHAR" property="userType"/>
+        <result column="user_state" jdbcType="CHAR" property="userState"/>
+        <result column="is_delete" jdbcType="CHAR" property="isDelete"/>
+        <result property="createBy" jdbcType="VARCHAR" column="create_by"/>
+        <result property="createTime" jdbcType="TIMESTAMP" column="create_time"/>
+        <result property="updateBy" jdbcType="VARCHAR" column="update_by"/>
+        <result property="updateTime" jdbcType="TIMESTAMP" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectSysUserVo">
+        select user_id,  tel_num,  password, user_type, user_state, is_delete, create_by, create_time, update_by, update_time
+        from lz_pf_user
+    </sql>
+
+    <select id="findSysUserDetail" parameterType="String" resultMap="SysUserResult">
+        <include refid="selectSysUserVo"/>
+        where tel_num = #{telNum} AND is_delete='1'
+    </select>
+
+
+  <!--  <select id="findSysUserInfo" parameterType="String" resultMap="SysUserResult">
+        select user_id,  tel_num,  password, user_type, user_state,
+        from lz_pf_user,lz_pf_user_info WHERE lz_pf_user.user_type= #{userType} AND  lz_pf_user.is_delete='1'
+    </select>
+-->
+
+</mapper>

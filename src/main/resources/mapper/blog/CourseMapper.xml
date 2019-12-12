@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.blog.dao.CourseMapper">
+    <resultMap id="courseMap" type="course">
+        <id property="coId" column="co_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="coTitle" column="co_title"/>
+        <result property="coType" column="co_type"/>
+        <result property="coStatus" column="co_status"/>
+        <result property="coLinkUrl" column="co_link_url"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="evtRelTime" column="evt_rel_time"/>
+        <result property="evtRelName" column="evt_rel_name"/>
+    </resultMap>
+
+    <select id="getEventById" resultType="com.xiaoyi.bis.blog.domain.Course" resultMap="courseMap">
+        SELECT co_id,user_id,co_title,co_type,co_status,co_link_url,img_url,is_delete,create_by,create_time,update_by,update_time,evt_rel_time
+        FROM lz_pf_course
+        WHERE co_status = 0 AND is_delete= 1 and user_id = #{userId}
+        <if test="coTitle != null and coTitle != ''">
+            AND co_title like concat('%', #{coTitle,jdbcType=VARCHAR}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="getEventByIdDraft" resultType="com.xiaoyi.bis.blog.domain.Course" resultMap="courseMap">
+        SELECT co_id,user_id,co_title,co_type,co_status,co_link_url,img_url,is_delete,create_by,create_time,update_by,update_time
+        FROM lz_pf_course
+        WHERE co_status = 1 AND is_delete= 1 and user_id = #{userId}
+        <if test="coTitle != null and coTitle != ''">
+            AND co_title like concat('%', #{coTitle,jdbcType=VARCHAR}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectdraftById" resultType="com.xiaoyi.bis.blog.domain.Course" resultMap="courseMap">
+        SELECT co_id,user_id,co_title,co_type,co_status,co_link_url,img_url,is_delete,create_by,create_time,update_by,update_time
+        FROM lz_pf_course
+        WHERE co_status = 1 AND is_delete= 1 and user_id = #{userId}
+        <if test="coTitle != null and coTitle != ''">
+            AND co_title like concat('%', #{coTitle,jdbcType=VARCHAR}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <update id="updateEvent" parameterType="course">
+        update lz_pf_course
+        set is_delete = 2
+        where co_id = #{coId}
+    </update>
+
+    <update id="releaseEvent" parameterType="course">
+        update lz_pf_course
+        set co_status = 0,
+            evt_rel_name = #{evtRelName},
+            evt_rel_time =#{evtRelTime}
+        where co_id = #{coId}
+    </update>
+
+    <select id="finddEchoById" resultType="com.xiaoyi.bis.blog.domain.Course" resultMap="courseMap">
+        SELECT co_id,user_id,co_title,co_type,co_status,co_link_url,img_url
+        FROM lz_pf_course
+        WHERE co_status = 1
+        AND co_id = #{coId}
+    </select>
+
+    <insert id="insertCourse" parameterType="course" useGeneratedKeys="true" keyProperty="coId">
+        insert INTO lz_pf_course(
+            co_id,
+            user_id,
+            co_title,
+            co_type,
+            co_status,
+            co_link_url,
+            img_url,
+            is_delete,
+            create_by,
+            create_time)
+        VALUES(
+            #{coId},
+            #{userId},
+            #{coTitle},
+            #{coType},
+            #{coStatus},
+            #{coLinkUrl},
+            #{imgUrl},
+            #{isDelete},
+            #{createBy},
+            #{createTime})
+    </insert>
+
+    <update id="updateCourse" parameterType="course">
+        UPDATE lz_pf_course
+        SET co_title = #{coTitle},
+            co_type = #{coType},
+            co_status = #{coStatus},
+            co_link_url = #{coLinkUrl},
+            img_url = #{imgUrl},
+            update_by = #{updateBy},
+            update_time = #{updateTime}
+        WHERE co_id = #{coId}
+    </update>
+</mapper>

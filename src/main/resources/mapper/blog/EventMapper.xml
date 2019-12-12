@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.blog.dao.EventMapper">
+    <resultMap id="eventMap" type="event">
+        <id property="evtId" column="evt_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="evtTitle" column="evt_title"/>
+        <result property="evtType" column="evt_type"/>
+        <result property="evtWay" column="evt_way"/>
+        <result property="evtStartTime" column="evt_start_time"/>
+        <result property="evtEndTime" column="evt_end_time"/>
+        <result property="evtAddress" column="evt_address"/>
+        <result property="evtContent" column="evt_content"/>
+        <result property="evtImgUrl" column="evt_img_url"/>
+        <result property="evtStatus" column="evt_status"/>
+        <result property="evtCheckStatus" column="evt_check_status"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="evtCoDdress" column="evt_co_ddress"/>
+        <result property="evtRelTime" column="evt_rel_time"/>
+        <result property="evtRelName" column="evt_rel_name"/>
+    </resultMap>
+
+    <select id="getEventById" resultType="com.xiaoyi.bis.blog.domain.Event" resultMap="eventMap">
+        SELECT e.evt_id,e.user_id,e.evt_title,e.evt_type,e.evt_way,e.evt_start_time,e.evt_end_time,e.evt_img_url,e.evt_status,e.evt_rel_time
+        FROM lz_pf_event e
+        WHERE e.evt_status = 0 AND e.is_delete= 1 and e.user_id = #{userId}
+        <if test="evtTitle != null and evtTitle != ''">
+            AND e.evt_title like concat('%', #{evtTitle,jdbcType=VARCHAR}, '%')
+        </if>
+        order by e.create_time desc
+    </select>
+
+    <select id="selectdraftById" resultType="com.xiaoyi.bis.blog.domain.Event" resultMap="eventMap">
+        SELECT e.evt_id,e.evt_title,e.user_id,e.evt_type,e.evt_way,e.evt_start_time,e.evt_end_time
+        FROM lz_pf_event e
+        WHERE e.evt_status = 1 AND e.is_delete= 1 and e.user_id = #{userId}
+        <if test="evtTitle != null and evtTitle != ''">
+            AND e.evt_title like concat('%', #{evtTitle,jdbcType=VARCHAR}, '%')
+        </if>
+    </select>
+
+    <update id="updateEvent" parameterType="event">
+        update lz_pf_event
+        set is_delete = 2
+        where evt_id = #{evtId}
+    </update>
+
+    <update id="releaseEvent" parameterType="event">
+        update lz_pf_event
+        set evt_status = 0,
+            evt_rel_name = #{evtRelName}
+        where evt_id = #{evtId}
+    </update>
+
+    <select id="finddEchoById" resultType="com.xiaoyi.bis.blog.domain.Event" resultMap="eventMap">
+        SELECT evt_id,
+               evt_title,
+               evt_img_url,
+               evt_type,
+               evt_way,
+               evt_start_time,
+               evt_end_time,
+               evt_content,
+               evt_address,
+               evt_co_ddress
+        FROM lz_pf_event
+        where evt_id = #{evtId}
+    </select>
+
+    <select id="finddEchoBy" resultType="com.xiaoyi.bis.blog.domain.Event" resultMap="eventMap">
+        SELECT evt_id,
+               evt_title,
+               evt_img_url,
+               evt_type,
+               evt_way,
+               evt_start_time,
+               evt_end_time,
+               evt_content,
+               evt_address,
+               evt_co_ddress
+        FROM lz_pf_event
+        where evt_id = #{evtId}
+    </select>
+
+    <insert id="insertEvent" parameterType="event" useGeneratedKeys="true" keyProperty="evtId">
+        insert into lz_pf_event
+        (evt_id,
+         evt_title,
+         evt_img_url,
+         evt_type,
+         evt_way,
+         evt_address,
+         evt_start_time,
+         evt_end_time,
+         evt_content,
+         evt_status,
+         is_delete,
+         create_by,
+         user_id,
+         create_time,
+         evt_check_status,
+         evt_co_ddress)
+        VALUES (#{evtId},
+                #{evtTitle},
+                #{evtImgUrl},
+                #{evtType},
+                #{evtWay},
+                #{evtAddress},
+                #{evtStartTime},
+                #{evtEndTime},
+                #{evtContent},
+                #{evtStatus},
+                #{isDelete},
+                #{createBy},
+                #{userId},
+                #{createTime},
+                #{evtCheckStatus},
+                #{evtCoDdress})
+    </insert>
+
+    <update id="updateEcho" parameterType="event">
+        UPDATE lz_pf_event
+        SET evt_title = #{evtTitle},
+            evt_img_url = #{evtImgUrl},
+            evt_type = #{evtType},
+            evt_way= #{evtWay},
+            evt_start_time = #{evtStartTime},
+            evt_end_time = #{evtEndTime},
+            evt_content = #{evtContent},
+            evt_status = #{evtStatus},
+            update_by = #{updateBy},
+            update_time = #{updateTime}
+        WHERE evt_id = #{evtId}
+    </update>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.xiaoyi.dao.LiveCourseDetailMapper">
+
+    <resultMap id="courseDetailMap" type="com.xiaoyi.bis.xiaoyi.domain.LiveCourseDetail">
+        <id property="id" column="id"></id>
+        <result property="courseId" column="course_id"></result>
+        <result property="lessonId" column="lesson_id"></result>
+        <result property="lessonName" column="lesson_name"></result>
+        <result property="code" column="code"></result>
+        <result property="lessonNum" column="lesson_num"></result>
+        <!--<result property="lessonDate" column="lesson_date"></result>-->
+        <result property="startDate" column="start_date"></result>
+        <result property="endDate" column="end_date"></result>
+        <result property="orgCode" column="org_code"></result>
+    </resultMap>
+
+    <select id="selectByCourseId" parameterType="int" resultMap="courseDetailMap">
+        SELECT * FROM `ty_course_detail` where course_id = #{courseId}
+    </select>
+
+    <update id="updateXiaoYiCourseDetail" parameterType="com.xiaoyi.bis.xiaoyi.domain.LiveCourseDetail">
+        update ty_course_detail
+        <trim prefix="set" suffixOverrides=",">
+            <if test="lessonId != null and lessonId !='' ">
+                lesson_id = #{lessonId},
+            </if>
+            <if test="courseId != null and courseId !=0 ">
+                course_id = #{courseId},
+            </if>
+            <if test="lessonName != null and lessonName !='' ">
+                lesson_name = #{lessonName},
+            </if>
+            <if test="code != null and code !='' ">
+                code = #{code},
+            </if>
+            <if test="lessonNum != null and lessonNum !=0 ">
+                lesson_name = #{lessonNum},
+            </if>
+            <if test="startDate != null">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null">
+                end_date = #{endDate},
+            </if>
+            <if test="orgCode != null and orgCode !='' ">
+                org_code = #{orgCode},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <insert id="insertXiaoYiCourseDetail" keyProperty="id" useGeneratedKeys="true" parameterType="com.xiaoyi.bis.xiaoyi.domain.LiveCourseDetail">
+        insert into ty_course_detail(course_id,lesson_name,code,lesson_num,start_date,end_date,org_code)
+        values(#{courseId},#{lessonName},#{code},#{lessonNum},#{startDate},#{endDate},#{orgCode})
+    </insert>
+
+    <delete id="deleteXiaoYiCourseDetail" parameterType="integer">
+        delete from ty_course_detail
+        where id = #{id}
+    </delete>
+
+</mapper>

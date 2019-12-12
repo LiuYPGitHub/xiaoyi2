@@ -1,0 +1,153 @@
+server:
+  port: 7999
+    # 修改全局 context path，所有的接口，默认就都是在 /api 下面
+    #servlet:
+  #context-path: /api
+
+spring:
+  datasource:
+    dynamic:
+      # 是否开启 SQL日志输出，生产环境建议关闭，有性能损耗
+      p6spy: true
+      hikari:
+        connection-timeout: 30000
+        max-lifetime: 1800000
+        max-pool-size: 15
+        min-idle: 5
+        connection-test-query: select 1
+        pool-name: FebsHikariCP
+      # 配置默认数据源
+      primary: primary
+      datasource:
+        # 数据源-1，名称为 primary
+        primary:
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          #url: jdbc:mysql://10.10.74.39:3306/zclz?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+          url: jdbc:mysql://192.168.0.107:3306/zclz?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+        # 数据源-2，名称为 test
+  #        test:
+  #          username: root
+  #          password: 123456
+  #          driver-class-name: com.mysql.cj.jdbc.Driver
+  #          url: jdbc:mysql://127.0.0.1:3306/febs_test?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+  aop:
+    proxy-target-class: true
+
+  messages:
+    encoding: utf-8
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+
+  redis:
+    host: 117.50.10.155
+    port: 6378
+    password: zcRedis9c
+    jedis:
+      pool:
+        min-idle: 8
+        max-idle: 500
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 2000
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 10000
+        # 连接超时时间（毫秒）
+    timeout: 100000
+  # 上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      # 设置总上传的文件大小
+      max-request-size: 50MB
+
+#mybatis plus 设置
+mybatis-plus:
+  type-aliases-package: com.xiaoyi.bis.system.domain,com.xiaoyi.bis.job.domain,com.xiaoyi.bis.blog.domain,com.xiaoyi.bis.job.domain,com.xiaoyi.bis.user.domain,com.xiaoyi.bis.xiaoyi.domain
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    jdbc-type-for-null: null
+  global-config:
+    # 关闭 mybatis-plus的 banner
+    banner: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ['httptrace', 'metrics']
+
+febs:
+  # 是否异步记录用户操作日志
+  openAopLog: true
+  # 单次最大批量入库数量
+  max:
+    batch:
+      insert:
+        num: 1000
+  shiro:
+    # 后端免认证接口 url
+    anonUrl: /login,/logout/**,/regist,/user/check/*,/**
+    # token有效期，单位秒
+    jwtTimeOut: 3600
+    jwtSecret: zc
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+file:
+  rootPath: /usr/local/tomcat/tomcat9/webapps/
+  urlPrefix: http://img.eduleads.com.cn/
+  imgPath: leads_img/
+  displayImg: /leads_img/default/icon.jpg
+
+  #file:
+  #rootPath: F:/pages/nginx/html/
+  #urlPrefix: http://192.168.0.151:801/
+  #imgPath: zc/
+
+smsApi:
+  url: http://117.50.11.4:8011
+
+#校翼文件-本地环境配置项
+xiaoYiFile:
+  rootPath: D:/WindowsApache/
+  urlPrefix: http://192.168.0.102:8000/
+  filePath: files/
+  uploadPath: upload/
+  liveImage: case.png
+  recordImage: record.png
+  studentTemplate: student.xlsx
+
+#校翼第三方-保利威配置参数
+xiaoYiService:
+  #正式环境-回调访问前缀
+  #callBackPrefix: http://120.132.68.197:${server.port}
+  #测试环境-回调访问前缀
+  callBackPrefix: http://94.191.62.87:80
+  #同步至点播Url
+  forwardRecordCallBack: /xiaoyi/fileForwardSaveCallBack
+  #合并视频Url
+  mergeRecordCallBack: /xiaoyi/mergeRecordFileCallBack
+  #开始录制回调
+  startRecordCallBack: /xiaoyi/startRecordCallBack
+  #设置智能录播课节是否可以试看 1:可以 2:不可以
+  allowTaste: 1
+
+#校翼第三方-添翼申学配置项
+tysxService:
+  #测试环境-录播接口访问前缀
+  recordCourseInterfacePrefix: http://frp.o-learn.cn:51085/thirdparty/
+  #测试环境-已上线录播课程访问路径前缀
+  recordCourseAccessPrefix: http://frp.o-learn.cn:51085/#/homePage/recordRecruit/classPreview/
+  #测试环境-已上线直播播课程访问路径前缀
+  liveCourseAccessPrefix: http://frp.o-learn.cn:51085/#/homePage/classRecruit/classPreview/
+  #测试环境-默认机构名称
+  siteName: 添翼申学

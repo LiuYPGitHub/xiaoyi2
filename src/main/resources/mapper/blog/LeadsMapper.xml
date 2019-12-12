@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.blog.dao.LeadsMapper">
+    <resultMap id="leadsMap" type="Leads">
+        <id property="leId" column="le_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="leParName" column="le_par_name"/>
+        <result property="leParPhone" column="le_par_phone"/>
+        <result property="leChiName" column="le_chi_name"/>
+        <result property="leChiAge" column="le_chi_age"/>
+        <result property="city" column="city"/>
+        <result property="leSchool" column="le_school"/>
+        <result property="leIntenType" column="le_inten_type"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="leChiGen" column="le_chi_gen"/>
+        <result property="grade" column="grade"/>
+
+        <result property="cityInput" column="city_input"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="areaName" column="area_name"/>
+        <result property="areaParentCode" column="area_parent_code"/>
+        <result property="areaLevel" column="area_level"/>
+        <result property="areaFlag" column="area_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+    </resultMap>
+
+
+<!--    <resultMap id="LeadsLeIntenTypeMap" type="LeadsLeIntenType">-->
+<!--        <id property="leId" column="le_id"/>-->
+<!--        <result property="realName" column="real_name"/>-->
+<!--        <result property="leParName" column="le_par_name"/>-->
+<!--        <result property="leParPhone" column="le_par_phone"/>-->
+<!--        <result property="leChiName" column="le_chi_name"/>-->
+<!--        <result property="leChiAge" column="le_chi_age"/>-->
+<!--        <result property="city" column="city"/>-->
+<!--        <result property="leSchool" column="le_school"/>-->
+<!--        <result property="leIntenType" column="le_inten_type"/>-->
+<!--        <result property="isDelete" column="is_delete"/>-->
+<!--        <result property="createBy" column="create_by"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--        <result property="updateBy" column="update_by"/>-->
+<!--        <result property="updateTime" column="update_time"/>-->
+<!--        <result property="leChiGen" column="le_chi_gen"/>-->
+<!--        <result property="grade" column="grade"/>-->
+
+<!--        <result property="areaCode" column="area_code"/>-->
+<!--        <result property="areaName" column="area_name"/>-->
+<!--        <result property="areaParentCode" column="area_parent_code"/>-->
+<!--        <result property="areaLevel" column="area_level"/>-->
+<!--        <result property="areaFlag" column="area_flag"/>-->
+<!--        <result property="createBy" column="create_by"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--        <result property="updateBy" column="update_by"/>-->
+<!--        <result property="updateTime" column="update_time"/>-->
+<!--    </resultMap>-->
+
+<!--    <resultMap id="codeMap" type="Code">-->
+<!--        <id property="areaCode" column="area_code"/>-->
+<!--        <result property="areaName" column="area_name"/>-->
+<!--        <result property="areaParentCode" column="area_parent_code"/>-->
+<!--        <result property="areaLevel" column="area_level"/>-->
+<!--        <result property="areaFlag" column="area_flag"/>-->
+<!--        <result property="createBy" column="create_by"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--        <result property="updateBy" column="update_by"/>-->
+<!--        <result property="updateTime" column="update_time"/>-->
+<!--    </resultMap>-->
+
+    <select id="getRealName" resultType="com.xiaoyi.bis.blog.domain.Leads" resultMap="leadsMap">
+        SELECT
+        le_id,real_name,le_par_name,le_par_phone,le_chi_name,le_chi_age,city,le_school,le_inten_type,create_by,create_time
+        FROM lz_pf_leads
+        where real_name = #{realName} and is_delete = 1
+        <if test="leParName != null and leParName != ''">
+            AND le_par_name like concat('%', #{leParName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="leParPhone != null and leParPhone != ''">
+            AND le_par_phone like concat('%', #{leParPhone,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="leChiName != null and leChiName != ''">
+            AND le_chi_name like concat('%', #{leChiName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="leSchool != null and leSchool != ''">
+            AND leSchool like concat('%', #{leSchool,jdbcType=VARCHAR}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+
+    <update id="updateLeads" parameterType="Leads">
+        UPDATE lz_pf_leads
+        set is_delete = 2
+        where le_id = #{leId}
+    </update>
+
+    <insert id="insertLeads" parameterType="Leads" useGeneratedKeys="true" keyProperty="leId">
+        INSERT INTO lz_pf_leads(
+            le_id,
+            real_name,
+            le_par_name,
+            le_par_phone,
+            le_chi_name,
+            le_chi_age,
+            city,
+            le_school,
+            le_inten_type,
+            is_delete,
+            create_by,
+            create_time,
+            le_chi_gen,
+            grade
+        )VALUES(
+            #{leId},
+            #{realName},
+            #{leParName},
+            #{leParPhone},
+            #{leChiName},
+            #{leChiAge},
+            #{city},
+            #{leSchool},
+            #{leIntenType},
+            #{isDelete},
+            #{createBy},
+            #{createTime},
+            #{leChiGen},
+            #{grade})
+    </insert>
+
+    <insert id="insertLeadsImp" parameterType="Leads" useGeneratedKeys="true" keyProperty="leId">
+        INSERT INTO lz_pf_leads(
+            le_id,
+            le_par_name,
+            le_par_phone,
+            le_chi_name,
+            le_chi_age,
+            le_school,
+            city,
+            le_inten_type
+        )VALUES(
+                   #{leId},
+                   #{leParName},
+                   #{leParPhone},
+                   #{leChiName},
+                   #{leChiAge},
+                   #{leSchool},
+                   #{city},
+                   #{leIntenType})
+    </insert>
+
+    <select id="finddEchoById" resultType="com.xiaoyi.bis.blog.domain.Leads" resultMap="leadsMap">
+        SELECT le_id,real_name,le_par_name,le_par_phone,le_chi_name,le_chi_age,city,le_school,le_inten_type,create_by,create_time,grade,le_chi_gen,city_input
+        FROM lz_pf_leads
+        WHERE is_delete = 1
+        AND le_id = #{leId}
+    </select>
+
+    <update id="updateleads" parameterType="Leads">
+        UPDATE lz_pf_leads
+        SET real_name = #{realName},
+            le_par_name = #{leParName},
+            le_par_phone = #{leParPhone},
+            le_chi_name = #{leChiName},
+            le_chi_age = #{leChiAge},
+            city = #{city},
+            le_school = #{leSchool},
+            le_inten_type = #{leIntenType},
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+            grade = #{grade},
+            le_chi_gen = #{leChiGen},
+            city_input = #{cityInput}
+        WHERE le_id = #{leId}
+    </update>
+
+    <insert id="addLeadsExcel" parameterType="com.xiaoyi.bis.blog.domain.Leads" useGeneratedKeys="true" keyProperty="leId">
+        INSERT INTO lz_pf_leads(
+            le_id,
+            le_par_name,
+            le_par_phone,
+            le_chi_name,
+            le_chi_age,
+            le_school,
+            city,
+            le_inten_type,
+            create_by,
+            create_time,
+            is_delete,
+            city_input,
+            real_name
+        )VALUES(
+                   #{leId},
+                   #{leParName},
+                   #{leParPhone},
+                   #{leChiName},
+                   #{leChiAge},
+                   #{leSchool},
+                   #{city},
+                   #{leIntenType},
+                   #{createBy},
+                   #{createTime},
+                   #{isDelete},
+                   #{cityInput},
+                   #{realName}
+                   )
+    </insert>
+
+    <select id="view" resultType="com.xiaoyi.bis.blog.domain.Leads" resultMap="leadsMap">
+        SELECT
+        le_id,real_name,le_par_name,le_par_phone,le_chi_name,le_chi_age,le_chi_gen,city,le_school,le_inten_type,grade,city_input
+        FROM lz_pf_leads
+        where le_id = #{leId}
+    </select>
+
+    <select id="selectCode" resultType="com.xiaoyi.bis.blog.domain.Leads" resultMap="leadsMap">
+        select area_code,area_name,area_parent_code
+        from lz_area_code
+        where area_code = #{areaCode}
+    </select>
+
+    <update id="timingGradeAge" parameterType="list">
+        UPDATE lz_pf_leads
+        set le_chi_age = #{leChiAge}+1,
+            grade      = #{grade}+1
+            where le_id = #{leId}
+    </update>
+
+    <update id="timingAge" parameterType="list">
+        UPDATE lz_pf_leads
+        set le_chi_age = #{leChiAge}+1
+        where le_id = #{leId}
+    </update>
+
+    <select id="timingQuote" resultType="com.xiaoyi.bis.blog.domain.Leads" resultMap="leadsMap">
+        SELECT le_chi_age,grade,le_id
+        FROM lz_pf_leads
+        WHERE is_delete = 1
+    </select>
+</mapper>

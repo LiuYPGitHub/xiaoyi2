@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.bis.xiaoyi.dao.LiveCourseMapper">
+
+    <resultMap id="courseMap" type="com.xiaoyi.bis.xiaoyi.domain.LiveCourse">
+        <id property="id" column="id"></id>
+        <result property="code" column="code"></result>
+        <result property="classId" column="class_id"></result>
+        <result property="courseName" column="course_name"></result>
+        <result property="account" column="account"></result>
+        <result property="teacherId" column="teacher_id"></result>
+        <result property="teacherName" column="teacher_name"></result>
+        <result property="teacherInfo" column="teacher_info"></result>
+        <result property="desc" column="desc"></result>
+        <result property="classType" column="class_type"></result>
+        <result property="classTag" column="class_tag"></result>
+        <result property="classDifficult" column="class_difficult"></result>
+        <result property="coverImg" column="cover_img"></result>
+        <result property="courseIntroduceImg" column="course_introduce_img"></result>
+        <result property="courseNum" column="course_num"></result>
+        <result property="classHour" column="class_hour"></result>
+        <result property="courseConsultant" column="course_consultant"></result>
+        <result property="coursePrompt" column="course_prompt"></result>
+        <result property="courseObj" column="course_obj"></result>
+        <result property="courseFeature" column="course_feature"></result>
+        <result property="courseContent" column="course_content"></result>
+        <result property="classInfo" column="class"></result>
+        <result property="textBook" column="textbook"></result>
+        <result property="price" column="price"></result>
+        <result property="clickCount" column="PV"></result>
+        <result property="visitCount" column="UV"></result>
+        <result property="totalBR" column="total_BR"></result>
+        <result property="priceCost" column="priceCost"></result>
+        <result property="isDel" column="is_del"></result>
+        <result property="isShow" column="is_show"></result>
+        <result property="status" column="status"></result>
+        <result property="createDate" column="reg_date"></result>
+        <result property="startDate" column="start_date"></result>
+        <result property="endDate" column="end_date"></result>
+        <result property="updatedAt" column="updated_at"></result>
+        <result property="createdAt" column="created_at"></result>
+        <result property="orgCode" column="org_code"></result>
+        <result property="enrollStartDate" column="enroll_start_date"></result>
+        <result property="enrollEndDate" column="enroll_end_date"></result>
+        <result property="teacherImage" column="teacher_img"></result>
+        <result property="createName" column="creator"></result>
+        <result property="maxCount" column="max_count"></result>
+    </resultMap>
+
+    <select id="selectCourse" parameterType="com.xiaoyi.bis.xiaoyi.domain.LiveCourse" resultMap="courseMap">
+        SELECT * FROM `ty_course`
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="status != -1 ">
+                and status = #{status}
+            </if>
+            <if test="orgCode!=null and orgCode!=''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="createName!=null and createName!=''">
+                and creator = #{createName}
+            </if>
+            <if test="code !=null and code!= ''">
+                and course_name like concat('%', #{code}, '%')
+                <if test="status != -1 ">
+                    and status = #{status}
+                </if>
+                <if test="orgCode!=null and orgCode!=''">
+                    and org_code = #{orgCode}
+                </if>
+                <if test="createName!=null and createName!=''">
+                    and creator = #{createName}
+                </if>
+                or teacher_name like concat('%', #{code}, '%')
+                <if test="status != -1 ">
+                    and status = #{status}
+                </if>
+                <if test="orgCode!=null and orgCode!=''">
+                    and org_code = #{orgCode}
+                </if>
+                <if test="createName!=null and createName!=''">
+                    and creator = #{createName}
+                </if>
+            </if>
+            and is_show = '1'
+        </trim>
+        <if test="orderType !=null and orderType ==1 ">
+            order by created_at desc
+        </if>
+    </select>
+
+    <select id="selectById" parameterType="int" resultMap="courseMap">
+        SELECT * FROM `ty_course` where id =#{id}
+    </select>
+
+    <select id="getOrgIdByUserId" resultType="string" parameterType="string">
+        SELECT org_id FROM `lz_pf_user`
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getSiteNameByUserId" resultType="string" parameterType="string">
+        SELECT real_name FROM `lz_pf_user_info`
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getNickNameByUserId" resultType="string" parameterType="string">
+        SELECT nick_name FROM `lz_pf_user_info`
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="isAdmin" parameterType="string" resultType="string">
+        SELECT role FROM `lz_pf_user`
+        WHERE user_id = #{userId}
+    </select>
+
+    <delete id="deleteCourse" parameterType="java.lang.Integer">
+        UPDATE `ty_course` SET is_show='2'
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateCourse" parameterType="com.xiaoyi.bis.xiaoyi.domain.LiveCourse">
+        update ty_course
+        <trim prefix="set" suffixOverrides=",">
+            <if test="maxCount!=null and maxCount!=0">
+                max_count = #{maxCount},
+            </if>
+            <if test="status!=0">
+                status = #{status},
+            </if>
+            <if test="classId !=null and classId !='' ">
+                class_id = #{classId},
+            </if>
+            <if test="teacherId !=null and teacherId !='' ">
+                teacher_id = #{teacherId},
+            </if>
+            <if test="courseName !=null and courseName !='' ">
+                course_name = #{courseName},
+            </if>
+            <if test="account !=null and account !='' ">
+                account = #{account},
+            </if>
+            <if test="orgCode !=null and orgCode !='' ">
+                org_code = #{orgCode},
+            </if>
+            <if test="teacherName !=null and teacherName !='' ">
+                teacher_name = #{teacherName},
+            </if>
+            <if test="teacherInfo !=null and teacherInfo !='' ">
+                teacher_info = #{teacherInfo},
+            </if>
+            <if test="desc !=null and desc !='' ">
+                `desc` = #{desc},
+            </if>
+            <if test="classType !=null and classType !='' ">
+                class_type = #{classType},
+            </if>
+            <if test="classTag !=null and classTag !='' ">
+                class_tag = #{classTag},
+            </if>
+            <if test="classDifficult !=null and classDifficult !='' ">
+                class_difficult = #{classDifficult},
+            </if>
+            <if test="coverImg !=null and coverImg !='' ">
+                cover_img = #{coverImg},
+            </if>
+            <if test="courseIntroduceImg !=null and courseIntroduceImg !='' ">
+                course_introduce_img = #{courseIntroduceImg},
+            </if>
+            <if test="courseNum !=null and courseNum !=0 ">
+                course_num = #{courseNum},
+            </if>
+            <if test="classHour !=null and classHour !='' ">
+                class_hour = #{classHour},
+            </if>
+            <if test="courseConsultant !=null and courseConsultant !='' ">
+                course_consultant = #{courseConsultant},
+            </if>
+            <if test="coursePrompt !=null and coursePrompt !='' ">
+                course_prompt = #{coursePrompt},
+            </if>
+            <if test="courseObj !=null and courseObj !='' ">
+                course_obj = #{courseObj},
+            </if>
+            <if test="courseFeature !=null and courseFeature !='' ">
+                course_feature = #{courseFeature},
+            </if>
+            <if test="courseContent !=null and courseContent !='' ">
+                course_content = #{courseContent},
+            </if>
+            <if test="classInfo !=null and classInfo !='' ">
+                `class` = #{classInfo},
+            </if>
+            <if test="textBook !=null and textBook !='' ">
+                `textbook` = #{textBook},
+            </if>
+            <if test="price !=null ">
+                `price` = #{price},
+            </if>
+            <if test="priceCost !=null ">
+                `priceCost` = #{priceCost},
+            </if>
+            <if test="isDel !=null and isDel!=0 ">
+                `is_del` = #{isDel},
+            </if>
+            <if test="isShow !=null and isShow !=0 ">
+                `is_show` = #{isShow},
+            </if>
+            <if test="startDate !=null ">
+                `start_date` = #{startDate},
+            </if>
+            <if test="endDate !=null ">
+                `end_date` = #{endDate},
+            </if>
+            <if test="teacherImage !=null and teacherImage !='' ">
+                `teacher_img` = #{teacherImage},
+            </if>
+            <if test="showEvaluation !=null and showEvaluation !=0 ">
+                `show_evaluation` = #{showEvaluation},
+            </if>
+            <if test="teacherImage !=null">
+                `enroll_start_date` = #{enrollStartDate},
+            </if>
+            <if test="teacherImage !=null">
+                `enroll_end_date` = #{enrollEndDate},
+            </if>
+            <if test="coverImg !=null and coverImg !='' ">
+                `cover_img` = #{coverImg},
+            </if>
+            <if test="courseIntroduceImg !=null and courseIntroduceImg !='' ">
+                `course_introduce_img` = #{courseIntroduceImg},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insertCourse" keyProperty="id" useGeneratedKeys="true" parameterType="com.xiaoyi.bis.xiaoyi.domain.LiveCourse">
+        insert into ty_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="maxCount!=null and maxCount!=0">
+                max_count,
+            </if>
+            <if test="code !=null and code!=''">
+                code,
+            </if>
+            <if test="classId !=null and classId!=''">
+                class_id,
+            </if>
+            <if test="courseName !=null and courseName!=''">
+                course_name,
+            </if>
+            <if test="account !=null and account!=''">
+                account,
+            </if>
+            <if test="teacherId !=null and teacherId!=''">
+                teacher_id,
+            </if>
+            <if test="teacherName !=null and teacherName!=''">
+                teacher_name,
+            </if>
+            <if test="teacherInfo !=null and teacherInfo!=''">
+                teacher_info,
+            </if>
+            <if test="desc !=null and desc!=''">
+                `desc`,
+            </if>
+            <if test="classType !=null and classType!=''">
+                class_type,
+            </if>
+            <if test="classTag !=null and classTag!=''">
+                class_tag,
+            </if>
+            <if test="classDifficult !=null and classDifficult!=''">
+                class_difficult,
+            </if>
+            <if test="coverImg !=null and coverImg!=''">
+                cover_img,
+            </if>
+            <if test="courseIntroduceImg !=null and courseIntroduceImg!=''">
+                course_introduce_img,
+            </if>
+            <if test="courseNum !=null">
+                course_num,
+            </if>
+            <if test="classHour !=null and classHour!=''">
+                class_hour,
+            </if>
+            <if test="courseConsultant !=null and courseConsultant!=''">
+                course_consultant,
+            </if>
+            <if test="coursePrompt !=null and coursePrompt!=''">
+                course_prompt,
+            </if>
+            <if test="courseObj !=null and courseObj!=''">
+                course_obj,
+            </if>
+            <if test="courseFeature !=null and courseFeature!=''">
+                course_feature,
+            </if>
+            <if test="courseContent !=null and courseContent!=''">
+                course_content,
+            </if>
+            <if test="classInfo !=null and classInfo!=''">
+                class,
+            </if>
+            <if test="textBook !=null and textBook!=''">
+                textbook,
+            </if>
+            <if test="price !=0">
+                price,
+            </if>
+            <if test="priceCost !=0">
+                priceCost,
+            </if>
+            <if test="clickCount !=null">
+                PV,
+            </if>
+            <if test="visitCount !=null">
+                UV,
+            </if>
+            <if test="totalBR !=null and totalBR!=''">
+                total_BR,
+            </if>
+            <if test="isDel !=null">
+                is_del,
+            </if>
+            <if test="isShow !=null">
+                is_show,
+            </if>
+            <if test="status !=null">
+                status,
+            </if>
+            <if test="createDate !=null">
+                reg_date,updated_at,created_at,
+            </if>
+            <if test="startDate !=null">
+                start_date,
+            </if>
+            <if test="endDate !=null">
+                end_date,
+            </if>
+            <if test="expirationDuration !=null">
+                expiration_duration,
+            </if>
+            <if test="orgCode!=null and orgCode!=''">
+                org_code,
+            </if>
+            <if test="createMobile!=null!=null and createMobile!=''">
+                create_mobile,
+            </if>
+            <if test="enrollStartDate != null">
+                enroll_start_date,
+            </if>
+            <if test="enrollEndDate != null">
+                enroll_end_date,
+            </if>
+            <if test="teacherImage != null">
+                teacher_img,
+            </if>
+            <if test="showEvaluation != null">
+                show_evaluation,
+            </if>
+            <if test="createName != null and createName!=''">
+                creator,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="maxCount!=null and maxCount!=0">
+                #{maxCount},
+            </if>
+            <if test="code !=null and code!=''">
+                #{code},
+            </if>
+            <if test="classId !=null and classId!=''">
+                #{classId},
+            </if>
+            <if test="courseName !=null and courseName!=''">
+                #{courseName},
+            </if>
+            <if test="account !=null and account!=''">
+                #{account},
+            </if>
+            <if test="teacherId !=null and teacherId!=''">
+                #{teacherId},
+            </if>
+            <if test="teacherName !=null and teacherName!=''">
+                #{teacherName},
+            </if>
+            <if test="teacherInfo !=null and teacherInfo!=''">
+                #{teacherInfo},
+            </if>
+            <if test="desc !=null and desc!=''">
+                #{desc},
+            </if>
+            <if test="classType !=null and classType!=''">
+                #{classType},
+            </if>
+            <if test="classTag !=null and classTag!=''">
+                #{classTag},
+            </if>
+            <if test="classDifficult !=null and classDifficult!=''">
+                #{classDifficult},
+            </if>
+            <if test="coverImg !=null and coverImg!=''">
+                #{coverImg},
+            </if>
+            <if test="courseIntroduceImg !=null and courseIntroduceImg!=''">
+                #{courseIntroduceImg},
+            </if>
+            <if test="courseNum !=null">
+                #{courseNum},
+            </if>
+            <if test="classHour !=null and classHour!=''">
+                #{classHour},
+            </if>
+            <if test="courseConsultant !=null and courseConsultant!=''">
+                #{courseConsultant},
+            </if>
+            <if test="coursePrompt !=null and coursePrompt!=''">
+                #{coursePrompt},
+            </if>
+            <if test="courseObj !=null and courseObj!=''">
+                #{courseObj},
+            </if>
+            <if test="courseFeature !=null and courseFeature!=''">
+                #{courseFeature},
+            </if>
+            <if test="courseContent !=null and courseContent!=''">
+                #{courseContent},
+            </if>
+            <if test="classInfo !=null and classInfo!=''">
+                #{classInfo},
+            </if>
+            <if test="textBook !=null and textBook!=''">
+                #{textBook},
+            </if>
+            <if test="price !=0">
+                #{price},
+            </if>
+            <if test="priceCost !=0">
+                #{priceCost},
+            </if>
+            <if test="clickCount !=null">
+                #{clickCount},
+            </if>
+            <if test="visitCount !=null">
+                #{visitCount},
+            </if>
+            <if test="totalBR !=null and totalBR!=''">
+                #{totalBR},
+            </if>
+            <if test="isDel !=null">
+                #{isDel},
+            </if>
+            <if test="isShow !=null">
+                #{isShow},
+            </if>
+            <if test="status !=null">
+                #{status},
+            </if>
+            <if test="createDate !=null">
+                #{createDate},#{createDate},#{createDate},
+            </if>
+            <if test="startDate !=null">
+                #{startDate},
+            </if>
+            <if test="endDate !=null">
+                #{endDate},
+            </if>
+            <if test="expirationDuration !=null">
+                #{expirationDuration},
+            </if>
+            <if test="orgCode!=null and orgCode!=''">
+                #{orgCode},
+            </if>
+            <if test="createMobile!=null!=null and createMobile!=''">
+                #{createMobile},
+            </if>
+            <if test="enrollStartDate != null">
+                #{enrollStartDate},
+            </if>
+            <if test="enrollEndDate != null">
+                #{enrollEndDate},
+            </if>
+            <if test="teacherImage != null">
+                #{teacherImage},
+            </if>
+            <if test="showEvaluation != null">
+                #{showEvaluation},
+            </if>
+            <if test="createName != null and createName!=''">
+                #{createName},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
